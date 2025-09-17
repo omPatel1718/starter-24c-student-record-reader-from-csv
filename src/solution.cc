@@ -11,30 +11,33 @@ Student ReadStudentRecFromStream(std::istream& is) {
 
     // read first and last name
     if (!(is >> first >> last)) {
-        return Student{}; // failed to read
-    }
-
-    // check that last name ends with a comma
-    if (last.empty() || last.back() != ',') {
         return Student{}; 
     }
-    last.pop_back(); // remove the comma
 
-    // combine full name
-    std::string fullname = first + " " + last;
-
-    // read delimiter and UIN
-    if (!(is >> delim) || delim != ',') {
+    // check last name ends with comma
+    if (last.empty() || last.back() != ',') {
         return Student{};
     }
+    last.pop_back();
+
+    std::string fullname = first + " " + last;
+
+    // consume space then comma before UIN
+    is >> std::ws;               // eat whitespace
+    if (!is.get(delim) || delim != ',') {
+        return Student{};
+    }
+
     if (!(is >> uin)) {
         return Student{};
     }
 
-    // read delimiter and GPA
-    if (!(is >> delim) || delim != ',') {
+    // consume space then comma before GPA
+    is >> std::ws;
+    if (!is.get(delim) || delim != ',') {
         return Student{};
     }
+
     if (!(is >> gpa)) {
         return Student{};
     }
